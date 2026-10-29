@@ -30,7 +30,7 @@ This tool allows Uber users to bulk download their ride receipts as PDF files fo
    uv add requests python-dotenv
    ```
 
-3. Create a `.env` file in the same directory as the script based on the provided `.env.example`:
+3. On the first run, the script opens a browser for login and saves the session cookies to a `.env` file beside the script. You can also create that file manually if needed:
    ```
    cookie_sid=your_sid_cookie_value
    cookie_csid=your_csid_cookie_value
@@ -38,7 +38,7 @@ This tool allows Uber users to bulk download their ride receipts as PDF files fo
    cookie_geoip=your_geoip_city_id_value
    ```
 
-   Note: These cookies are sensitive information. Do not share them or commit the `.env` file to version control.
+   Note: These cookies are sensitive information. The script restricts the file to your user account. Do not share them or commit the `.env` file to version control. If you run the script from another directory, it still reads and writes the `.env` beside the script.
 
 ## Obtaining Uber Session Cookies
 

@@ -9,7 +9,8 @@ import requests
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+ENV_FILE = Path(__file__).resolve().with_name(".env")
+load_dotenv(ENV_FILE)
 
 UBER_API = "https://riders.uber.com"
 
@@ -59,10 +60,20 @@ def interactive_login() -> None:
             page.wait_for_timeout(1000)
             
         print("Login successful! Capturing cookies...")
-        os.environ["cookie_sid"] = cookies.get("sid", "")
-        os.environ["cookie_csid"] = cookies.get("csid", "")
-        os.environ["cookie_jwt"] = cookies.get("jwt-session", "")
-        os.environ["cookie_geoip"] = cookies.get("GEOIP_CITY_ID_COOKIE", "")
+        cookie_env = {
+            "cookie_sid": cookies.get("sid", ""),
+            "cookie_csid": cookies.get("csid", ""),
+            "cookie_jwt": cookies.get("jwt-session", ""),
+            "cookie_geoip": cookies.get("GEOIP_CITY_ID_COOKIE", ""),
+        }
+        from dotenv import set_key
+
+        for key, value in cookie_env.items():
+            if value:
+                set_key(str(ENV_FILE), key, value, quote_mode="always")
+                os.environ[key] = value
+        # Session cookies are credentials; restrict the file to the current user.
+        os.chmod(ENV_FILE, 0o600)
         browser.close()
 
 def uber_request(data: dict) -> dict:
